@@ -1,25 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Favorites from './pages/Favorites';
+import MovieDetail from './pages/MovieDetail';
+import './styles.css';
+import data from './data.json';  
 
-function App() {
+const App = () => {
+  const [favorites, setFavorites] = useState([]);
+
+  const handleAddFavorite = (movie) => {
+    if (!favorites.some(fav => fav.id === movie.id)) {
+      setFavorites([...favorites, movie]);
+    }
+  };
+
+  const handleRemoveFavorite = (id) => {
+    setFavorites(favorites.filter(fav => fav.id !== id));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route 
+          path="/" 
+          element={
+            <Home 
+              comingSoon={data['movies-coming']}
+              inTheaters={data['movies-in-theaters']}
+              topRatedIndian={data['top-rated-india']}
+              topRatedMovies={data['top-rated-movies']}
+              onFavorite={handleAddFavorite}
+            />
+          } 
+        />
+        <Route path="/favorites" element={<Favorites favorites={favorites} onRemoveFavorite={handleRemoveFavorite} />} />
+        <Route path="/movie/:id" element={<MovieDetail />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
